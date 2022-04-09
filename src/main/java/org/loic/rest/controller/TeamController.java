@@ -11,7 +11,7 @@ import javax.ws.rs.Path;
 
 import org.bson.types.ObjectId;
 import org.loic.domain.data.TeamEntity;
-import org.loic.rest.json.response.TeamUpdate;
+import org.loic.rest.json.request.TeamUpdate;
 
 @Path("/teams")
 public class TeamController {
@@ -24,23 +24,25 @@ public class TeamController {
     @PUT
     public List<TeamEntity> update(Set<TeamUpdate> teams) {
 
+        System.out.print("x");
+
         final Set<TeamEntity> teamsToAdd = teams.stream()
                 .filter(Predicate.not(TeamUpdate::isDeleted))
-                .filter(TeamUpdate::isBlankId)
-                .filter(Predicate.not(TeamUpdate::isBlankCode))
-                .filter(Predicate.not(TeamUpdate::isBlankName))
-                .map(t -> new TeamEntity(t.getName(), t.getCode()))
+                .filter(TeamUpdate::hasBlankId)
+                .filter(Predicate.not(TeamUpdate::hasBlankCode))
+                .filter(Predicate.not(TeamUpdate::hasBlankName))
+                .map(t -> new TeamEntity(t.getCode(), t.getName()))
                 .collect(Collectors.toSet());
         TeamEntity.persist(teamsToAdd);
 
         teams.stream()
                 .filter(TeamUpdate::isDeleted)
-                .filter(Predicate.not(TeamUpdate::isBlankId))
+                .filter(Predicate.not(TeamUpdate::hasBlankId))
                 .forEach(team -> TeamEntity.deleteById(new ObjectId(team.getId())));
 
         teams.stream()
                 .filter(Predicate.not(TeamUpdate::isDeleted))
-                .filter(Predicate.not(TeamUpdate::isBlankId))
+                .filter(Predicate.not(TeamUpdate::hasBlankId))
                 .forEach(team -> {
                     TeamEntity teamToUpdate = TeamEntity.findById(new ObjectId(team.getId()));
                     teamToUpdate.setCode(team.getCode());

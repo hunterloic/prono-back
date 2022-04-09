@@ -1,4 +1,4 @@
-package org.loic.rest.json.response;
+package org.loic.rest.json.request;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -15,15 +15,15 @@ public class TeamUpdate {
     private String code;
     private boolean deleted;
 
-    public boolean isBlankId() {
+    public boolean hasBlankId() {
         return StringUtils.isBlank(id);
     }
 
-    public boolean isBlankName() {
+    public boolean hasBlankName() {
         return StringUtils.isBlank(name);
     }
 
-    public boolean isBlankCode() {
+    public boolean hasBlankCode() {
         return StringUtils.isBlank(code);
     }
 
