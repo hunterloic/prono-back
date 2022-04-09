@@ -1,0 +1,22 @@
+quarkus:
+  mongodb:
+    database: prono
+  http:
+    port: 8081
+    cors: true
+  swagger-ui:
+    always-include: true
+    
+# Development profile
+"%prod":
+  quarkus:
+    mongodb:
+      connection-string: mongodb://localhost:27017
+    
+# Development profile
+"%dev":
+  quarkus:
+    mongodb:
+      connection-string: mongodb://localhost:27017
+      devservices: 
+        enabled: false
