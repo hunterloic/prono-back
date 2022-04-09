@@ -6,6 +6,10 @@ quarkus:
     cors: true
   swagger-ui:
     always-include: true
+  oidc:
+    auth-server-url: http://localhost:8080/realms/prono
+    client-id: prono-back
+    application-type: SERVICE
     
 # Development profile
 "%prod":

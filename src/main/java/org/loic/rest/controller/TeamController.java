@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -13,7 +14,10 @@ import org.bson.types.ObjectId;
 import org.loic.domain.data.TeamEntity;
 import org.loic.rest.json.request.TeamUpdate;
 
+import io.quarkus.security.Authenticated;
+
 @Path("/teams")
+@Authenticated
 public class TeamController {
 
     @GET
@@ -22,6 +26,7 @@ public class TeamController {
     }
 
     @PUT
+    @RolesAllowed("admin")
     public List<TeamEntity> update(Set<TeamUpdate> teams) {
 
         System.out.print("x");
