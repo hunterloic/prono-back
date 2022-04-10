@@ -29,8 +29,6 @@ public class TeamController {
     @RolesAllowed("admin")
     public List<TeamEntity> update(Set<TeamUpdate> teams) {
 
-        System.out.print("x");
-
         final Set<TeamEntity> teamsToAdd = teams.stream()
                 .filter(Predicate.not(TeamUpdate::isDeleted))
                 .filter(TeamUpdate::hasBlankId)
