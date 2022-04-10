@@ -13,6 +13,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CategoryEntity extends PanacheMongoEntity {
-    private String order;
+    private int order;
     private String name;
 }

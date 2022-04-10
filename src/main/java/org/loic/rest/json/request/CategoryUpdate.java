@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CategoryUpdate {
     private String id;
-    private String order;
+    private int order;
     private String name;
     private boolean deleted;
 
@@ -21,10 +21,6 @@ public class CategoryUpdate {
 
     public boolean hasBlankName() {
         return StringUtils.isBlank(name);
-    }
-
-    public boolean hasBlankOrder() {
-        return StringUtils.isBlank(order);
     }
 
 }

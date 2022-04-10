@@ -23,7 +23,7 @@ public class CategoryController {
     @GET
     public List<CategoryEntity> list() {
         List<CategoryEntity> categories = CategoryEntity.findAll().list();
-        categories.sort((o1, o2) -> Integer.parseInt(o1.getOrder()) - Integer.parseInt(o2.getOrder()));
+        categories.sort((o1, o2) -> o1.getOrder() - o2.getOrder());
         return categories;
     }
 
@@ -34,7 +34,6 @@ public class CategoryController {
         final Set<CategoryEntity> categoriesToAdd = categories.stream()
                 .filter(Predicate.not(CategoryUpdate::isDeleted))
                 .filter(CategoryUpdate::hasBlankId)
-                .filter(Predicate.not(CategoryUpdate::hasBlankOrder))
                 .filter(Predicate.not(CategoryUpdate::hasBlankName))
                 .map(t -> new CategoryEntity(t.getOrder(), t.getName()))
                 .collect(Collectors.toSet());
@@ -56,7 +55,7 @@ public class CategoryController {
                 });
 
         List<CategoryEntity> categoriesUpdated = CategoryEntity.findAll().list();
-        categoriesUpdated.sort((o1, o2) -> Integer.parseInt(o1.getOrder()) - Integer.parseInt(o2.getOrder()));
+        categoriesUpdated.sort((o1, o2) -> o1.getOrder() - o2.getOrder());
         return categoriesUpdated;
     }
 
