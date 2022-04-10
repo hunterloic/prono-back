@@ -7,15 +7,16 @@ quarkus:
   swagger-ui:
     always-include: true
   oidc:
-    auth-server-url: http://localhost:8080/realms/prono
     client-id: prono-back
     application-type: SERVICE
     
-# Development profile
+# Production profile
 "%prod":
   quarkus:
     mongodb:
       connection-string: mongodb://localhost:27017
+    oidc:
+      auth-server-url: http://localhost:8080/realms/prono
     
 # Development profile
 "%dev":
@@ -24,3 +25,5 @@ quarkus:
       connection-string: mongodb://localhost:27017
       devservices: 
         enabled: false
+    oidc:
+      auth-server-url: http://localhost:8080/realms/prono

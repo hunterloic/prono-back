@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@MongoEntity(collection = "team")
+@MongoEntity(collection = "teams")
 @Getter
 @Setter
 @AllArgsConstructor
