@@ -1,23 +1,25 @@
 package org.loic.rest.json.request;
 
+import javax.validation.constraints.NotBlank;
+
 import org.apache.commons.lang3.StringUtils;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class TeamUpdate {
-    private String id;
-    private String name;
-    private String code;
-    private boolean deleted;
+public class TeamUpdate extends ManagedRessource {
 
-    public boolean hasBlankId() {
-        return StringUtils.isBlank(id);
-    }
+    @NotBlank(message = "Team name is mandatory")
+    private String name;
+
+    @NotBlank(message = "Team code is mandatory")
+    private String code;
 
     public boolean hasBlankName() {
         return StringUtils.isBlank(name);

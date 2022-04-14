@@ -11,7 +11,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 
 import org.bson.types.ObjectId;
-import org.loic.domain.data.TeamEntity;
+import org.loic.domain.data.Team;
 import org.loic.rest.json.request.TeamUpdate;
 
 import io.quarkus.security.Authenticated;
@@ -21,39 +21,36 @@ import io.quarkus.security.Authenticated;
 public class TeamController {
 
     @GET
-    public List<TeamEntity> list() {
-        return TeamEntity.findAll().list();
+    public List<Team> list() {
+        return Team.findAll().list();
     }
 
     @PUT
     @RolesAllowed("admin")
-    public List<TeamEntity> update(Set<TeamUpdate> teams) {
+    public List<Team> update(Set<TeamUpdate> teams) {
 
-        final Set<TeamEntity> teamsToAdd = teams.stream()
+        Team.persist(teams.stream()
                 .filter(Predicate.not(TeamUpdate::isDeleted))
-                .filter(TeamUpdate::hasBlankId)
-                .filter(Predicate.not(TeamUpdate::hasBlankCode))
-                .filter(Predicate.not(TeamUpdate::hasBlankName))
-                .map(t -> new TeamEntity(t.getCode(), t.getName()))
-                .collect(Collectors.toSet());
-        TeamEntity.persist(teamsToAdd);
+                .filter(TeamUpdate::isNew)
+                .map(t -> new Team(t.getCode(), t.getName()))
+                .collect(Collectors.toSet()));
 
         teams.stream()
                 .filter(TeamUpdate::isDeleted)
-                .filter(Predicate.not(TeamUpdate::hasBlankId))
-                .forEach(team -> TeamEntity.deleteById(new ObjectId(team.getId())));
+                .filter(Predicate.not(TeamUpdate::isNew))
+                .forEach(team -> Team.deleteById(new ObjectId(team.getId())));
 
         teams.stream()
                 .filter(Predicate.not(TeamUpdate::isDeleted))
-                .filter(Predicate.not(TeamUpdate::hasBlankId))
+                .filter(Predicate.not(TeamUpdate::isNew))
                 .forEach(team -> {
-                    TeamEntity teamToUpdate = TeamEntity.findById(new ObjectId(team.getId()));
+                    Team teamToUpdate = Team.findById(new ObjectId(team.getId()));
                     teamToUpdate.setCode(team.getCode());
                     teamToUpdate.setName(team.getName());
                     teamToUpdate.update();
                 });
 
-        return TeamEntity.findAll().list();
+        return Team.findAll().list();
     }
 
 }

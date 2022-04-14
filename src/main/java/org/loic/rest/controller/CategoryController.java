@@ -11,7 +11,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 
 import org.bson.types.ObjectId;
-import org.loic.domain.data.CategoryEntity;
+import org.loic.domain.data.Category;
 import org.loic.rest.json.request.CategoryUpdate;
 
 import io.quarkus.security.Authenticated;
@@ -21,40 +21,38 @@ import io.quarkus.security.Authenticated;
 public class CategoryController {
 
     @GET
-    public List<CategoryEntity> list() {
-        List<CategoryEntity> categories = CategoryEntity.findAll().list();
+    public List<Category> list() {
+        List<Category> categories = Category.findAll().list();
         categories.sort((o1, o2) -> o1.getOrder() - o2.getOrder());
         return categories;
     }
 
     @PUT
     @RolesAllowed("admin")
-    public List<CategoryEntity> update(Set<CategoryUpdate> categories) {
+    public List<Category> update(Set<CategoryUpdate> categories) {
 
-        final Set<CategoryEntity> categoriesToAdd = categories.stream()
+        Category.persist(categories.stream()
                 .filter(Predicate.not(CategoryUpdate::isDeleted))
-                .filter(CategoryUpdate::hasBlankId)
-                .filter(Predicate.not(CategoryUpdate::hasBlankName))
-                .map(t -> new CategoryEntity(t.getOrder(), t.getName()))
-                .collect(Collectors.toSet());
-        CategoryEntity.persist(categoriesToAdd);
+                .filter(CategoryUpdate::isNew)
+                .map(category -> new Category(category.getOrder(), category.getName()))
+                .collect(Collectors.toSet()));
 
         categories.stream()
                 .filter(CategoryUpdate::isDeleted)
-                .filter(Predicate.not(CategoryUpdate::hasBlankId))
-                .forEach(team -> CategoryEntity.deleteById(new ObjectId(team.getId())));
+                .filter(Predicate.not(CategoryUpdate::isNew))
+                .forEach(category -> Category.deleteById(new ObjectId(category.getId())));
 
         categories.stream()
                 .filter(Predicate.not(CategoryUpdate::isDeleted))
-                .filter(Predicate.not(CategoryUpdate::hasBlankId))
-                .forEach(team -> {
-                    CategoryEntity teamToUpdate = CategoryEntity.findById(new ObjectId(team.getId()));
-                    teamToUpdate.setOrder(team.getOrder());
-                    teamToUpdate.setName(team.getName());
-                    teamToUpdate.update();
+                .filter(Predicate.not(CategoryUpdate::isNew))
+                .forEach(category -> {
+                    Category categoryToUpdate = Category.findById(new ObjectId(category.getId()));
+                    categoryToUpdate.setOrder(category.getOrder());
+                    categoryToUpdate.setName(category.getName());
+                    categoryToUpdate.update();
                 });
 
-        List<CategoryEntity> categoriesUpdated = CategoryEntity.findAll().list();
+        List<Category> categoriesUpdated = Category.findAll().list();
         categoriesUpdated.sort((o1, o2) -> o1.getOrder() - o2.getOrder());
         return categoriesUpdated;
     }

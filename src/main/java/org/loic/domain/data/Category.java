@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryEntity extends PanacheMongoEntity {
+public class Category extends PanacheMongoEntity {
     private int order;
     private String name;
 }

@@ -1,23 +1,26 @@
 package org.loic.rest.json.request;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang3.StringUtils;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class CategoryUpdate {
-    private String id;
-    private int order;
-    private String name;
-    private boolean deleted;
+public class CategoryUpdate extends ManagedRessource {
 
-    public boolean hasBlankId() {
-        return StringUtils.isBlank(id);
-    }
+    @NotNull(message = "Category order is mandatory")
+    private int order;
+
+    @NotBlank(message = "Category name is mandatory")
+    private String name;
 
     public boolean hasBlankName() {
         return StringUtils.isBlank(name);
