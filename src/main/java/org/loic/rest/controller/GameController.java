@@ -6,6 +6,7 @@ import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -16,8 +17,10 @@ import org.loic.domain.data.Game.Category;
 import org.loic.domain.data.Game.Team;
 import org.loic.rest.json.request.GameUpdate;
 
+import io.quarkus.security.Authenticated;
+
 @Path("/games")
-// @Authenticated
+@Authenticated
 public class GameController {
 
     @GET
@@ -26,7 +29,7 @@ public class GameController {
     }
 
     @PUT
-    // @RolesAllowed("admin")
+    @RolesAllowed("admin")
     public List<Game> update(Set<GameUpdate> games) {
 
         BiFunction<Game, GameUpdate, Game> gameInitializator = (game, gameUpdate) -> {
