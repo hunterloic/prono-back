@@ -16,7 +16,7 @@ import org.loic.rest.json.request.TeamUpdate;
 
 import io.quarkus.security.Authenticated;
 
-@Path("/teams")
+@Path("/team")
 @Authenticated
 public class TeamController {
 

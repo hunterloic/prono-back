@@ -19,7 +19,7 @@ import org.loic.rest.json.request.GameUpdate;
 
 import io.quarkus.security.Authenticated;
 
-@Path("/games")
+@Path("/game")
 @Authenticated
 public class GameController {
 

@@ -16,7 +16,7 @@ import org.loic.rest.json.request.CategoryUpdate;
 
 import io.quarkus.security.Authenticated;
 
-@Path("/categories")
+@Path("/category")
 @Authenticated
 public class CategoryController {
 
