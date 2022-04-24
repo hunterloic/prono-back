@@ -10,7 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class PronosticUpdate extends ManagedRessource {
-    private String id;
     private String gameId;
     private String teamId;
     private int pronostic;
