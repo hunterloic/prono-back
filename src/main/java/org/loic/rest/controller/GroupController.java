@@ -9,21 +9,33 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.security.RolesAllowed;
+import javax.inject.Inject;
+import javax.validation.constraints.NotBlank;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.loic.domain.data.Group;
+import org.loic.domain.data.UserGroup;
 import org.loic.rest.json.request.GroupUpdate;
 import org.loic.rest.json.response.GroupResponse;
 
 import io.quarkus.security.Authenticated;
+import io.quarkus.security.identity.SecurityIdentity;
+import io.smallrye.common.constraint.NotNull;
 
 @Path("/group")
 @Authenticated
 public class GroupController {
+
+    @Inject
+    SecurityIdentity securityIdentity;
 
     Function<Group.Member, GroupResponse.Member> memberResponseMapper = (m) -> {
         return new GroupResponse.Member(m.getUserName());
@@ -86,5 +98,29 @@ public class GroupController {
 
         Stream<Group> groupsUpdated = Group.findAll().stream();
         return groupsUpdated.map(groupResponseMapper).collect(Collectors.toList());
+    }
+
+    @POST
+    @Path("/join")
+    public void join(@NotBlank @NotNull @QueryParam("id") String groupId,
+            @NotBlank @NotNull @QueryParam("password") String password) {
+
+        String userName = securityIdentity.getPrincipal().getName();
+
+        boolean alreadyInGroup = UserGroup.count("userName = ?1 and groupId = ?2", userName, groupId) > 0;
+        if (alreadyInGroup) {
+            return;
+        }
+
+        Group group = Group.findById(new ObjectId(groupId));
+        if (group == null) {
+            throw new NotFoundException("Group not found");
+        }
+
+        if (group.getPassword() != password) {
+            throw new NotAuthorizedException("Wrong password");
+        }
+
+        UserGroup userGroupToAdd = new UserGroup(groupId, userName);
     }
 }

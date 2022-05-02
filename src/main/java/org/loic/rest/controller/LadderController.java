@@ -90,8 +90,8 @@ public class LadderController {
     @GET
     @Path("/user")
     public int pointWithUserName() {
+
         String userName = securityIdentity.getPrincipal().getName();
-        userName = "loicj";
 
         List<Game> games = Game.findAll().list();
         List<Pronostic> pronostics = Pronostic.findByUserName(userName);
