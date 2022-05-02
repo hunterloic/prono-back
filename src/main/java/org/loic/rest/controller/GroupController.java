@@ -117,7 +117,5 @@ public class GroupController {
         group.get().getMembers().add(new Group.Member(userName));
         group.get().update();
 
-        return;
-
     }
 }
