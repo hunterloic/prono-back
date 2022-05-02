@@ -172,7 +172,7 @@ public class LadderController {
                 ladderGroup.getMembers().add(ladderMember);
             });
 
-            response.setGroup(ladderGroup);
+            response.getGroups().add(ladderGroup);
         });
 
         return response;

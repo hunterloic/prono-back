@@ -118,4 +118,21 @@ public class GroupController {
         group.get().update();
 
     }
+
+    @GET
+    @Path("/leave")
+    public void leave(@NotNull @NotBlank @QueryParam("groupName") final String groupName) {
+
+        String userName = securityIdentity.getPrincipal().getName();
+
+        System.out.println(groupName);
+        Optional<Group> group = Group.findByGroupName(groupName);
+        if (group.isEmpty()) {
+            throw new NotFoundException("Group not found");
+        }
+
+        group.get().getMembers().removeIf(member -> member.getUserName().equals(userName));
+        group.get().update();
+
+    }
 }

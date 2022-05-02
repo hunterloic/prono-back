@@ -32,6 +32,10 @@ public class Group extends PanacheMongoEntity {
         return Group.find("password = ?1", password).firstResultOptional();
     }
 
+    public static Optional<Group> findByGroupName(String groupName) {
+        return Group.find("name = ?1", groupName).firstResultOptional();
+    }
+
     public static List<Group> findByMember(String userName) {
         return Group.find("members.userName = ?1", userName).list();
     }

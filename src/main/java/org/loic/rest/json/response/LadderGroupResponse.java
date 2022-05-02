@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LadderGroupResponse {
 
-    private Group group;
+    private List<Group> groups = new ArrayList<Group>();
 
     @Data
     @AllArgsConstructor
