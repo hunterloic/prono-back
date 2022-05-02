@@ -1,6 +1,7 @@
 package org.loic.rest.controller;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -12,9 +13,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.constraints.NotBlank;
 import javax.ws.rs.GET;
-import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
-import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -22,7 +21,6 @@ import javax.ws.rs.QueryParam;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.loic.domain.data.Group;
-import org.loic.domain.data.UserGroup;
 import org.loic.rest.json.request.GroupUpdate;
 import org.loic.rest.json.response.GroupResponse;
 
@@ -100,27 +98,26 @@ public class GroupController {
         return groupsUpdated.map(groupResponseMapper).collect(Collectors.toList());
     }
 
-    @POST
+    @GET
     @Path("/join")
-    public void join(@NotBlank @NotNull @QueryParam("id") String groupId,
-            @NotBlank @NotNull @QueryParam("password") String password) {
+    public void join(@NotNull @NotBlank @QueryParam("password") final String password) {
 
         String userName = securityIdentity.getPrincipal().getName();
 
-        boolean alreadyInGroup = UserGroup.count("userName = ?1 and groupId = ?2", userName, groupId) > 0;
-        if (alreadyInGroup) {
-            return;
-        }
-
-        Group group = Group.findById(new ObjectId(groupId));
-        if (group == null) {
+        Optional<Group> group = Group.findByPassword(password);
+        if (group.isEmpty()) {
             throw new NotFoundException("Group not found");
         }
 
-        if (group.getPassword() != password) {
-            throw new NotAuthorizedException("Wrong password");
+        if (group.get().getMembers().stream().anyMatch(m -> m.getUserName().equals(userName))) {
+            // user already in group
+            return;
         }
 
-        UserGroup userGroupToAdd = new UserGroup(groupId, userName);
+        group.get().getMembers().add(new Group.Member(userName));
+        group.get().update();
+
+        return;
+
     }
 }
