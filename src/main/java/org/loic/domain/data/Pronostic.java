@@ -18,7 +18,7 @@ public class Pronostic extends PanacheMongoEntity {
     private String userName;
     private String gameId;
     private String teamId;
-    private int pronostic;
+    private Integer pronostic;
 
     public static List<Pronostic> findByUserName(String userName) {
         return Pronostic.find("userName = ?1", userName).list();
