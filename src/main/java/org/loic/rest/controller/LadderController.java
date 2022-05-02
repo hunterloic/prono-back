@@ -12,7 +12,9 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 
+import org.apache.commons.lang3.StringUtils;
 import org.loic.domain.data.Game;
 import org.loic.domain.data.Group;
 import org.loic.domain.data.Pronostic;
@@ -117,9 +119,11 @@ public class LadderController {
 
     @GET
     @Path("/user")
-    public int pointWithUserName() {
+    public int pointWithUserName(@QueryParam("userName") String userName) {
 
-        String userName = securityIdentity.getPrincipal().getName();
+        if (StringUtils.isBlank(userName)) {
+            userName = securityIdentity.getPrincipal().getName();
+        }
 
         List<Game> games = Game.findOverGames();
         List<Pronostic> pronostics = Pronostic.findByUserName(userName);
